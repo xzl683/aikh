@@ -1,0 +1,9 @@
+{
+  "name": "exam-clock",
+  "version": "1.0.0",
+  "private": true,
+  "description": "考试倒计时模拟器",
+  "scripts": {
+    "test": "node --test tests/pure-functions.test.js"
+  }
+}

@@ -210,7 +210,7 @@ function closeDropdown() {
 }
 
 // 点击外部关闭下拉框
-document.addEventListener("click", function (e) {
+if (typeof document !== "undefined") document.addEventListener("click", function (e) {
   if (activeDropdown && !activeDropdown.contains(e.target)) {
     const trigger = activeDropdown.previousElementSibling;
     if (!trigger || !trigger.contains(e.target)) {
@@ -661,7 +661,7 @@ function initializeDatePicker() {
 }
 
 // DOM加载完成后初始化
-document.addEventListener("DOMContentLoaded", function () {
+if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", function () {
   // 日期会在initializeDatePicker中初始化
 
   // 添加第一个默认环节
@@ -1586,4 +1586,9 @@ function applyCustomExam() {
 
   // 跳转到主页面
   window.location.href = "index.html";
+}
+
+// 导出纯函数供 Node 环境自动化测试（T3）；浏览器中 module 未定义，此守卫不执行
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { validateAndFormatTime };
 }

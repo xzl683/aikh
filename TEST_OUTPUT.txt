@@ -1,0 +1,29 @@
+﻿
+> exam-clock@1.0.0 test
+> node --test tests/pure-functions.test.js
+
+✔ T1 fixture(科目一90计入/休息10不计/科目二30计入) 各环节 start/end/realTime (2.176ms)
+✔ T1 考试结束位置 = totalMinutes (0.1819ms)
+✔ T1 全部 countInTotal:false 时不抛错且总时长为 0 (0.1576ms)
+✔ formatTime(0) === "00:00:00" (0.1422ms)
+✔ formatTime(7325) === "02:02:05" (0.1343ms)
+✔ formatTime 负数钳 0 (0.7506ms)
+✔ calculateEndTime("09:00", 120) === "11:00" (0.2013ms)
+✔ calculateEndTime("23:30", 120) === "01:30 (次日)" (0.1233ms)
+✔ calculateEndTime("00:00", 0) === "00:00" (0.1335ms)
+✔ validateAndFormatTime("09:30") === "09:30" (0.2984ms)
+✔ validateAndFormatTime("9:30") === "09:30" (0.1542ms)
+✔ validateAndFormatTime("0930") === "09:30" (0.1245ms)
+✔ validateAndFormatTime("25:99") === null (0.0783ms)
+✔ validateAndFormatTime("abc") === null (0.081ms)
+✔ validateAndFormatTime("") === null (0.0704ms)
+✔ validateAndFormatTime(null) === null (0.0929ms)
+✔ validateAndFormatTime("24:00") === null (0.1024ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.9583

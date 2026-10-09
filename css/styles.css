@@ -3217,3 +3217,14 @@ h1 {
     gap: 12px;
   }
 }
+
+/* T2: 环节切换视觉提示（当前环节区域闪烁高亮，与提示音同一开关） */
+.section-flash {
+  animation: section-flash-anim 1.5s ease-out;
+}
+@keyframes section-flash-anim {
+  0%, 100% { background-color: transparent; }
+  20% { background-color: rgba(255, 196, 0, 0.35); }
+  45% { background-color: transparent; }
+  65% { background-color: rgba(255, 196, 0, 0.25); }
+}
