@@ -18,16 +18,16 @@ test('T1 fixture(科目一90计入/休息10不计/科目二30计入) 各环节 s
   const r = buildCustomSections(sections, "09:00");
   assert.strictEqual(r.totalMinutes, 120, "totalMinutes 应为 120");
   const s = r.sections;
-  // 科目一: 0/90 09:00-10:30
+  // 科目一(计入): 计时轴 0/90；考场时间 09:00-10:30
   assert.deepStrictEqual([s[0].start, s[0].end, s[0].realTime], [0, 90, "09:00-10:30"]);
   assert.strictEqual(s[0].countInTotal, true);
-  // 休息(不计入): 90/90 零时长占位 10:30-10:30
-  assert.deepStrictEqual([s[1].start, s[1].end, s[1].realTime], [90, 90, "10:30-10:30"]);
+  // 休息(不计入): 计时轴 90/90 零时长占位；考场时间占实际 10min → 10:30-10:40
+  assert.deepStrictEqual([s[1].start, s[1].end, s[1].realTime], [90, 90, "10:30-10:40"]);
   assert.strictEqual(s[1].countInTotal, false, "不计入环节保留 countInTotal=false");
-  // 科目二: 90/120 10:30-11:00
-  assert.deepStrictEqual([s[2].start, s[2].end, s[2].realTime], [90, 120, "10:30-11:00"]);
-  // 考试结束: 120/120 11:00
-  assert.deepStrictEqual([s[3].start, s[3].end, s[3].name, s[3].realTime], [120, 120, "考试结束", "11:00"]);
+  // 科目二(计入): 计时轴 90/120；考场时间 10:40-11:10（休息占了 10min）
+  assert.deepStrictEqual([s[2].start, s[2].end, s[2].realTime], [90, 120, "10:40-11:10"]);
+  // 考试结束: 计时轴 120/120；考场时间取所有环节实际时长之和 130min → 11:10
+  assert.deepStrictEqual([s[3].start, s[3].end, s[3].name, s[3].realTime], [120, 120, "考试结束", "11:10"]);
 });
 
 test('T1 考试结束位置 = totalMinutes', () => {

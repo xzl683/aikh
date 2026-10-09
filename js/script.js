@@ -1322,9 +1322,12 @@ if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded
 
 // 纯函数：把自定义考试 sections 转换为首页环节链
 // 无 DOM 依赖，供自动化测试直接单测（T3）
-// 语义：不计入总时间（countInTotal===false）的环节为零时长占位（start===end），
-//       位置等于其之前所有计入环节时长之和；计入环节依次拼接；
-//       "考试结束"环节 start=end=totalMinutes（=所有计入环节时长之和）。
+// 语义：维护两个时间轴——
+//   计时轴(start/end)：不计入环节为零时长占位(start===end)，仅累加计入环节，
+//                      用于 currentTime=totalTime-timeLeft 匹配当前环节，
+//                      保证 totalTime 与环节链末端一致；
+//   考场时间轴(realTime)：累加所有环节(含不计入)的实际 duration，反映墙上时钟。
+// "考试结束"环节 start=end=totalMinutes，realTime 取考场时间轴末端。
 // 返回 { sections, totalMinutes }，与 saveCustomExam 的累加口径一致。
 function buildCustomSections(sections, startTime) {
   const [startHours, startMinutes] = String(startTime).split(":").map(Number);
@@ -1338,35 +1341,43 @@ function buildCustomSections(sections, startTime) {
   };
 
   const result = [];
-  let currentTime = 0; // 仅累加计入环节，等于 totalMinutes
+  let countedTime = 0; // 计时轴：仅累加计入环节，等于 totalMinutes
+  let realOffset = 0;  // 考场时间轴：累加所有环节实际时长
 
   (sections || []).forEach((section) => {
     const counted = section.countInTotal !== false; // undefined 视为计入，安全默认
-    const start = currentTime;
-    const end = counted ? start + section.duration : start; // 不计入 → 零时长占位
+    // 计时轴：不计入 → 零时长占位
+    const start = countedTime;
+    const end = counted ? start + section.duration : start;
+    // 考场时间轴：不计入也占实际时长
+    const realStart = realOffset;
+    const realEnd = realOffset + section.duration;
+
     result.push({
       name: section.name,
       start,
       duration: section.duration,
       end,
       description: section.description,
-      realTime: realTimeOf(start, end),
+      realTime: realTimeOf(realStart, realEnd),
       countInTotal: section.countInTotal, // 保留语义，供 updateSectionList 渲染"不计时"
     });
-    if (counted) currentTime = end;
+
+    if (counted) countedTime = end;
+    realOffset = realEnd; // 考场时间轴始终推进
   });
 
-  // "考试结束"环节：start=end=totalMinutes
+  // "考试结束"环节：计时轴 start=end=totalMinutes；考场时间取 realOffset
   result.push({
     name: "考试结束",
-    start: currentTime,
+    start: countedTime,
     duration: 0,
-    end: currentTime,
+    end: countedTime,
     description: "考试结束",
-    realTime: realTimeOf(currentTime, currentTime).split("-")[1],
+    realTime: realTimeOf(realOffset, realOffset).split("-")[1],
   });
 
-  return { sections: result, totalMinutes: currentTime };
+  return { sections: result, totalMinutes: countedTime };
 }
 
 // 应用自定义考试配置
