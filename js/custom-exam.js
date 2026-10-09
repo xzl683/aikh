@@ -1027,6 +1027,10 @@ function saveCustomExam() {
 
   for (let i = 0; i < sectionRows.length; i++) {
     const row = sectionRows[i];
+    // 跳过系统自动生成的"考试结束"环节（时长为 0，不可编辑）
+    if (row.classList.contains("end-section-card")) {
+      continue;
+    }
     const name = row.querySelector(".section-name").value;
     const duration = parseInt(row.querySelector(".section-duration").value);
     let description = row.querySelector(".section-description").value;
@@ -1513,6 +1517,10 @@ function applyCustomExam() {
   // 验证并收集环节信息
   for (let i = 0; i < sectionRows.length; i++) {
     const row = sectionRows[i];
+    // 跳过系统自动生成的"考试结束"环节（时长为 0，不可编辑）
+    if (row.classList.contains("end-section-card")) {
+      continue;
+    }
     const name = row.querySelector(".section-name").value;
     const duration = parseInt(row.querySelector(".section-duration").value);
     let description = row.querySelector(".section-description").value;
